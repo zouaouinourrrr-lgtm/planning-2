@@ -35,7 +35,7 @@ def generate_initial_planning(year, month):
         last_p = chosen
     return planning
 
-# 3. INITIALISATION SÉCURISÉE
+# 3. INITIALISATION
 now = datetime.now()
 if 'full_plan' not in st.session_state:
     st.session_state.full_plan = generate_initial_planning(now.year, now.month)
@@ -44,7 +44,7 @@ if 'full_plan' not in st.session_state:
 user = st.selectbox("Qui êtes-vous ?", ["Mouna", "Soumaya", "Hajer", "Khaled"])
 today_str = now.strftime("%d/%m")
 
-# Vérification si le planning existe bien (Sécurité Error)
+# Sécurité si le plan est vide
 if st.session_state.full_plan:
     current_plan = st.session_state.full_plan
     tonight_idx = next((i for i, d in enumerate(current_plan) if d["date"] == today_str), None)
@@ -70,7 +70,17 @@ if st.session_state.full_plan:
 
     if st.button("Afficher mon planning complet"):
         st.subheader(f"📅 Tes nuits pour {calendar.month_name[now.month]} :")
-        my_days = [d for d in current_plan if d["nom"] == user]
+        my_days = [d for d in st.session_state.full_plan if d["nom"] == user]
         for d in my_days:
-            status
+            # EL FIX HOUNI: badalna "status" b "emoji" 3adi
+            emoji = "🟢" if d["date"] != today_str else "🟠 (CE SOIR)"
+            st.write(f"{emoji} **{d['jour']} {d['date']}**")
+
+    # Sidebar Stats
+    st.sidebar.header("📊 Score du mois")
+    for p in ["Mouna", "Soumaya", "Hajer", "Khaled"]:
+        count = sum(1 for d in st.session_state.full_plan if d["nom"] == p)
+        st.sidebar.text(f"{p}: {count} nuits")
+       
+
 
