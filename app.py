@@ -4,7 +4,7 @@ import calendar
 from datetime import datetime
 
 # Configuration de la page
-st.set_page_config(page_title="Planning l'El Walda", page_icon="🏠")
+st.set_page_config(page_title="Planning", page_icon="🏠")
 st.title("🏠 Planning de Garde Familial")
 
 # --- LOGIC DU PLANNING ---
@@ -50,7 +50,7 @@ st.divider()
 
 if today_guard:
     if today_guard["nom"] == user:
-        st.error(f"🔔 **NOTIFICATION :** C'est TON tour ce soir, **{user}** ! N'oublie pas l'Walda. ❤️")
+        st.error(f"🔔 **NOTIFICATION :** C'est TON tour ce soir, **{user}** ! N'oublie pas  ❤️")
         st.balloons()
         # Bouton Check-in
         if st.button("✅ J'ai fait ma garde / Je suis présent"):
