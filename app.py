@@ -34,7 +34,7 @@ def generate_planning(year, month):
     return planning
 
 user = st.selectbox("Eshkoun enti?", ["Mouna", "Soumaya", "Hajer", "Khaled"])
-if st.button(" وريني وقتاش نبيت "):
+if st.button("Afficher mon planning "):
     now = datetime.now()
     plan = generate_planning(now.year, now.month)
     mes_jours = [d for d in plan if d["nom"] == user]
