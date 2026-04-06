@@ -3,7 +3,7 @@ import random
 import calendar
 from datetime import datetime
 
-st.title("🏠 Planning l'El Walda")
+st.title("🏠 Planning")
 
 def generate_planning(year, month):
     exwet = ["Mouna", "Soumaya", "Hajer", "Khaled"]
