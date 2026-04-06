@@ -3,10 +3,11 @@ import random
 import calendar
 from datetime import datetime
 
+# 1. Config et Titre
 st.set_page_config(page_title="Planning l'El Walda", page_icon="🏠")
 st.title("🏠 Planning & Mode Urgence")
 
-# --- LOGIQUE DU PLANNING ---
+# 2. FONCTION GÉNÉRATION (Lazemha dima mawjouda)
 def generate_initial_planning(year, month):
     exwet = ["Mouna", "Soumaya", "Hajer", "Khaled"]
     jours_fr = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
@@ -34,46 +35,46 @@ def generate_initial_planning(year, month):
         last_p = chosen
     return planning
 
-# --- GESTION DE LA MÉMOIRE (Session State) ---
-if 'full_plan' not in st.session_state:
-    now = datetime.now()
+# 3. FIX: Initialisation de la mémoire (Session State)
+now = datetime.now()
+if 'full_plan' not in st.session_state or st.session_state.full_plan is None:
     st.session_state.full_plan = generate_initial_planning(now.year, now.month)
 
-# --- INTERFACE ---
+# 4. Interface utilisateur
 user = st.selectbox("Qui êtes-vous ?", ["Mouna", "Soumaya", "Hajer", "Khaled"])
-today_str = datetime.now().strftime("%d/%m")
+today_str = now.strftime("%d/%m")
 
-# Trouver qui doit être là ce soir
-tonight_idx = next((i for i, d in enumerate(st.session_state.full_plan) if d["date"] == today_str), None)
+# Trouver la garde de ce soir
+current_plan = st.session_state.full_plan
+tonight_idx = next((i for i, d in enumerate(current_plan) if d["date"] == today_str), None)
 
 st.divider()
 
+# 5. Affichage de la notification de ce soir
 if tonight_idx is not None:
-    current_guard = st.session_state.full_plan[tonight_idx]
-    
-    if current_guard["nom"] == user:
+    guard_tonight = current_plan[tonight_idx]
+    if guard_tonight["nom"] == user:
         st.error(f"🚨 **Urgence :** {user}, c'est ton tour ce soir !")
-        
-        # BOUTON SWAP (L'URGENCE)
-        if st.sidebar.button("🚨 JE NE PEUX PAS CE SOIR"):
-            # Chercher un remplaçant parmi les 3 autres
+        if st.button("🚨 JE NE PEUX PAS CE SOIR"):
             others = [n for n in ["Mouna", "Soumaya", "Hajer", "Khaled"] if n != user]
-            # Contrainte Hajer : mouch Lundi/Dimanche
-            if current_guard["jour"] in ["Lundi", "Dimanche"]:
+            if guard_tonight["jour"] in ["Lundi", "Dimanche"]:
                 others = [n for n in others if n != "Hajer"]
-            
             new_person = random.choice(others)
             st.session_state.full_plan[tonight_idx]["nom"] = new_person
-            st.warning(f"🔄 Changement effectué ! **{new_person}** te remplace pour ce soir.")
+            st.warning(f"🔄 Changement ! **{new_person}** te remplace.")
             st.rerun()
-            
     else:
-        st.info(f"📅 Ce soir : **{current_guard['nom']}** est de garde.")
+        st.info(f"📅 Ce soir : **{guard_tonight['nom']}** est de garde.")
 
 st.divider()
 
-# --- AFFICHAGE DU PLANNING ---
-if st.button("Afficher mon planning"):
+# 6. Bouton pour afficher le planning complet (DIMA YE5DEM TAWA)
+if st.button("Afficher mon planning complet"):
+    st.subheader(f"📅 Tes nuits pour {calendar.month_name[now.month]} :")
     my_days = [d for d in st.session_state.full_plan if d["nom"] == user]
-
+    if not my_days:
+        st.write("Aucune nuit trouvée pour ce mois.")
+    for d in my_days:
+        status = "🟢" if d["date"] != today_str else "🟠 (CE SOIR)"
+        st.write(f"{status} **{d['jour']} {d['date']}
 
